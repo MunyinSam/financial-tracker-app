@@ -64,8 +64,8 @@ const data = {
                     url: '/dashboard/accounts/summary',
                 },
                 {
-                    title: 'Checking Account',
-                    url: '/dashboard/accounts/checking',
+                    title: 'Fixed Deposit Account',
+                    url: '/dashboard/accounts/fixed',
                 },
                 {
                     title: 'Savings Account',
