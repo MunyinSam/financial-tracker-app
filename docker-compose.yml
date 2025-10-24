@@ -9,9 +9,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
-      POSTGRES_DB: financial_tracker
+      POSTGRES_DB: ${DB_NAME:-financial_tracker}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
