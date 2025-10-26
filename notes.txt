@@ -1,0 +1,34 @@
+# Start only postgres
+docker-compose up -d postgres
+
+# Stop only postgres
+docker-compose stop postgres
+
+# Start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+
+# View logs for postgres
+docker-compose logs -f postgres
+
+# Check running containers
+docker ps
+
+# Restart postgres
+docker-compose restart postgres
+
+
+Summary
+Layer Flow:
+
+SQL File → Raw schema definition
+Migration Utility → Executes SQL
+Types → TypeScript interfaces
+Models → Database operations
+Services → Business logic (create next)
+Controllers → HTTP handlers (create next)
+Routes → URL mapping (create next)
+app.ts → Orchestrates everything
+This approach is scalable, maintainable, and follows best practices! 🎉
