@@ -92,6 +92,21 @@ export const BankAccountController = {
 		}
 	},
 
+	async getSummary(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { userId } = req.query;
+
+			if (!userId || typeof userId !== 'string') {
+				return res.status(400).json({ error: 'User ID is required' });
+			}
+
+			const summary = await BankAccountService.getSummaryByUser(userId);
+			res.json(summary);
+		} catch (err) {
+			next(err);
+		}
+	},
+
 	async deleteBankAccount(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;

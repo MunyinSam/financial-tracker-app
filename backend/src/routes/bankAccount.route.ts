@@ -9,6 +9,9 @@ router.post('/', BankAccountController.createBankAccount);
 // GET /api/bank-accounts
 router.get('/', BankAccountController.listBankAccounts);
 
+// GET /api/bank-accounts/summary?userId=1
+router.get('/summary', BankAccountController.getSummary);
+
 // GET /api/bank-accounts/:id
 router.get('/:id', BankAccountController.getBankAccount);
 

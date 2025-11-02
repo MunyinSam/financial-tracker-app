@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	bankAccountApi,
-	BankAccountCreatePayload,
 	BankAccountUpdatePayload,
 } from './backAccount.service';
 
-// Simple query keys
+// Query keys or Cache
 export const bankAccountKeys = {
 	all: ['bank-accounts'] as const,
+	summary: (userId: string) => ['bank-accounts', 'summary', userId] as const,
 };
 
 // GET all accounts
@@ -15,6 +15,15 @@ export const useBankAccounts = () => {
 	return useQuery({
 		queryKey: bankAccountKeys.all, // will save cache
 		queryFn: bankAccountApi.getAll,
+	});
+};
+
+// GET summary
+export const useBankAccountSummary = (userId: string) => {
+	return useQuery({
+		queryKey: bankAccountKeys.summary(userId),
+		queryFn: () => bankAccountApi.getSummary(userId),
+		enabled: !!userId,
 	});
 };
 

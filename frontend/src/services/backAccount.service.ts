@@ -32,12 +32,30 @@ export interface BankAccountUpdatePayload {
 	openedDate?: string;
 }
 
+export interface BankAccountSummary {
+	totalBalance: number;
+	accountCount: number;
+	accountsByType: Array<{
+		accountType: string;
+		count: number;
+		totalBalance: number;
+	}>;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || '';
 
 export const bankAccountApi = {
 	async getAll(): Promise<BankAccount[]> {
 		const res = await fetch(`${API_URL}/api/bank-accounts`);
 		if (!res.ok) throw new Error('Failed to fetch bank accounts');
+		return res.json();
+	},
+
+	async getSummary(userId: string): Promise<BankAccountSummary> {
+		const res = await fetch(
+			`${API_URL}/api/bank-accounts/summary?userId=${userId}`
+		);
+		if (!res.ok) throw new Error('Failed to fetch summary');
 		return res.json();
 	},
 

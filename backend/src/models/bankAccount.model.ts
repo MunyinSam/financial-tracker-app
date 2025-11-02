@@ -17,6 +17,51 @@ export class BankAccountModel {
 		return result.rows[0] || null;
 	}
 
+	static async getSummaryByUser(userId: string): Promise<{
+		totalBalance: number;
+		accountCount: number;
+		accountsByType: Array<{
+			accountType: string;
+			count: number;
+			totalBalance: number;
+		}>;
+	}> {
+		// Get total balance and count
+		const summaryQuery = `
+            SELECT 
+                COUNT(*)::int as account_count,
+                COALESCE(SUM(Balance), 0)::numeric as total_balance
+            FROM BankAccount
+            WHERE UserId = $1
+        `;
+		const summaryResult = await query(summaryQuery, [userId]);
+
+		// Get breakdown by account type
+		const typeQuery = `
+            SELECT 
+                AccountType as account_type,
+                COUNT(*)::int as count,
+                COALESCE(SUM(Balance), 0)::numeric as total_balance
+            FROM BankAccount
+            WHERE UserId = $1
+            GROUP BY AccountType
+            ORDER BY total_balance DESC
+        `;
+		const typeResult = await query(typeQuery, [userId]);
+
+		return {
+			totalBalance: parseFloat(
+				summaryResult.rows[0]?.total_balance || '0'
+			),
+			accountCount: summaryResult.rows[0]?.account_count || 0,
+			accountsByType: typeResult.rows.map((row: any) => ({
+				accountType: row.account_type || 'Other',
+				count: row.count,
+				totalBalance: parseFloat(row.total_balance),
+			})),
+		};
+	}
+
 	static async create(payload: {
 		userId: string;
 		bankName: string;
