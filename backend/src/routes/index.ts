@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import bankAccountRouter from './bankAccount.route';
 
 const router = Router();
 
@@ -14,5 +15,8 @@ router.get('/', (req, res) => {
 		// },
 	});
 });
+
+router.use('/api/bank-accounts', bankAccountRouter);
+
 
 export default router;

@@ -7,13 +7,8 @@ export interface BankAccount {
     accountNumber: string;
     accountName: string;
     balance: number;
-    accountType?: 'Savings' | 'Fixed' ;
+    accountType?: 'Savings' | 'Checking' | 'Credit' | 'Fixed';
     openedDate?: string;
     lastTransaction?: string;
     monthlyChange?: number;
-}
-
-export interface BankAccountsCarouselProps {
-    accounts: BankAccount[];
-    onAddAccount?: () => void;
 }

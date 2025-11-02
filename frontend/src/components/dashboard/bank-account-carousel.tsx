@@ -1,7 +1,13 @@
-'use client'
+'use client';
 
-import { BankAccount, BankAccountsCarouselProps } from "@/src/types"
-import { BankAccountCard } from "./back-account-card";
+import { AddBankAccountCard } from './add-bank-account-card';
+import { BankAccountCard } from './bank-account-card';
+import { BankAccount } from '@/src/types';
+
+interface BankAccountsCarouselProps {
+    accounts: BankAccount[];
+    onAddAccount?: () => void;
+}
 
 export function BankAccountsCarousel({
     accounts,
@@ -14,7 +20,7 @@ export function BankAccountsCarousel({
                     {accounts.map((account) => (
                         <BankAccountCard key={account.id} {...account} />
                     ))}
-                    {/* <AddBankAccountCard onAddAccount={onAddAccount} /> */}
+                    <AddBankAccountCard onAddAccount={onAddAccount} />
                 </div>
             </div>
         </div>
