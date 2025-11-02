@@ -8,7 +8,7 @@ export interface BankAccountPayload {
 	accountNumber: string;
 	accountName: string;
 	balance: number;
-	accountType?: 'Savings' | 'Fixed';
+	accountType?: 'Savings' | 'Fixed' | 'Other';
 	openedDate?: string;
 }
 
@@ -34,6 +34,19 @@ export const BankAccountService = {
 
 	async getById(accountId: string): Promise<BankAccount | null> {
 		return BankAccountModel.findById(accountId);
+	},
+
+	async getByType(
+		accountType: 'Savings' | 'Fixed' | 'Other'
+	): Promise<BankAccount[]> {
+		return BankAccountModel.findByType(accountType);
+	},
+
+	async getByUserAndType(
+		userId: string,
+		accountType: 'Savings' | 'Fixed' | 'Other'
+	): Promise<BankAccount[]> {
+		return BankAccountModel.findByUserAndType(userId, accountType);
 	},
 
 	async getSummaryByUser(userId: string): Promise<{

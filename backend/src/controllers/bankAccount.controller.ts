@@ -107,6 +107,37 @@ export const BankAccountController = {
 		}
 	},
 
+	async getByType(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { type } = req.params;
+			const { userId } = req.query;
+
+			// Validate account type
+			if (!['Savings', 'Fixed', 'Other'].includes(type)) {
+				return res.status(400).json({
+					error: 'Invalid account type. Must be Savings, Fixed, or Other',
+				});
+			}
+
+			const accountType = type as 'Savings' | 'Fixed' | 'Other';
+
+			// If userId is provided, filter by user
+			let accounts;
+			if (userId && typeof userId === 'string') {
+				accounts = await BankAccountService.getByUserAndType(
+					userId,
+					accountType
+				);
+			} else {
+				accounts = await BankAccountService.getByType(accountType);
+			}
+
+			res.json(accounts);
+		} catch (err) {
+			next(err);
+		}
+	},
+
 	async deleteBankAccount(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;

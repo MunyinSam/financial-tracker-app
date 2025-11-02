@@ -6,8 +6,10 @@ import {
 
 // Query keys or Cache
 export const bankAccountKeys = {
-	all: ['bank-accounts'] as const,
-	summary: (userId: string) => ['bank-accounts', 'summary', userId] as const,
+    all: ['bank-accounts'] as const,
+    summary: (userId: string) => ['bank-accounts', 'summary', userId] as const,
+    byType: (type: string, userId?: string) =>
+        ['bank-accounts', 'type', type, userId] as const,
 };
 
 // GET all accounts
@@ -24,6 +26,17 @@ export const useBankAccountSummary = (userId: string) => {
 		queryKey: bankAccountKeys.summary(userId),
 		queryFn: () => bankAccountApi.getSummary(userId),
 		enabled: !!userId,
+	});
+};
+
+// GET by type
+export const useBankAccountsByType = (
+	accountType: 'Savings' | 'Fixed' | 'Other',
+	userId?: string
+) => {
+	return useQuery({
+		queryKey: bankAccountKeys.byType(accountType, userId),
+		queryFn: () => bankAccountApi.getByType(accountType, userId),
 	});
 };
 

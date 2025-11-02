@@ -17,6 +17,36 @@ export class BankAccountModel {
 		return result.rows[0] || null;
 	}
 
+	static async findByType(
+		accountType: 'Savings' | 'Fixed' | 'Other'
+	): Promise<BankAccount[]> {
+		const text = `
+            SELECT * FROM BankAccount 
+            WHERE AccountType = $1 
+            ORDER BY AccountId DESC
+        `;
+		const result: QueryResult<BankAccount> = await query(text, [
+			accountType,
+		]);
+		return result.rows;
+	}
+
+	static async findByUserAndType(
+		userId: string,
+		accountType: 'Savings' | 'Fixed' | 'Other'
+	): Promise<BankAccount[]> {
+		const text = `
+            SELECT * FROM BankAccount 
+            WHERE UserId = $1 AND AccountType = $2 
+            ORDER BY AccountId DESC
+        `;
+		const result: QueryResult<BankAccount> = await query(text, [
+			userId,
+			accountType,
+		]);
+		return result.rows;
+	}
+
 	static async getSummaryByUser(userId: string): Promise<{
 		totalBalance: number;
 		accountCount: number;

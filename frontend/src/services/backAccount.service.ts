@@ -59,6 +59,19 @@ export const bankAccountApi = {
 		return res.json();
 	},
 
+	async getByType(
+		accountType: 'Savings' | 'Fixed' | 'Other',
+		userId?: string
+	): Promise<BankAccount[]> {
+		const url = userId
+			? `${API_URL}/api/bank-accounts/type/${accountType}?userId=${userId}`
+			: `${API_URL}/api/bank-accounts/type/${accountType}`;
+
+		const res = await fetch(url);
+		if (!res.ok) throw new Error(`Failed to fetch ${accountType} accounts`);
+		return res.json();
+	},
+
 	async create(payload: BankAccountCreatePayload): Promise<BankAccount> {
 		const res = await fetch(`${API_URL}/api/bank-accounts`, {
 			method: 'POST',

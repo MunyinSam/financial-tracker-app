@@ -40,14 +40,16 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<QueryClientProvider client={queryClient}>
-					<SidebarProvider>
-						<AppSidebar />
-						<SidebarInset>
-							<main className="flex-1 overflow-auto p-4">
-								{children}
-							</main>
-						</SidebarInset>
-					</SidebarProvider>
+					<div className="min-h-screen w-full overflow-x-hidden">
+						<SidebarProvider>
+							<AppSidebar />
+							<SidebarInset>
+								<main className="flex-1 overflow-auto p-4">
+									{children}
+								</main>
+							</SidebarInset>
+						</SidebarProvider>
+					</div>
 				</QueryClientProvider>
 			</body>
 		</html>

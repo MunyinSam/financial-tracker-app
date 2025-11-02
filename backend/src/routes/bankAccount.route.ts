@@ -12,6 +12,9 @@ router.get('/', BankAccountController.listBankAccounts);
 // GET /api/bank-accounts/summary?userId=1
 router.get('/summary', BankAccountController.getSummary);
 
+// GET /api/bank-accounts/type/:type?userId=1
+router.get('/type/:type', BankAccountController.getByType);
+
 // GET /api/bank-accounts/:id
 router.get('/:id', BankAccountController.getBankAccount);
 

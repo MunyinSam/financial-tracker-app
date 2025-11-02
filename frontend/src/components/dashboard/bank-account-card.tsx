@@ -302,6 +302,7 @@ export function BankAccountCard({
 									size="sm"
 									className="w-full"
 									onClick={handleHistoryClick}
+									disabled={true}
 								>
 									History
 								</Button>
