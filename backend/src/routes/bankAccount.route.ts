@@ -9,4 +9,13 @@ router.post('/', BankAccountController.createBankAccount);
 // GET /api/bank-accounts
 router.get('/', BankAccountController.listBankAccounts);
 
+// GET /api/bank-accounts/:id
+router.get('/:id', BankAccountController.getBankAccount);
+
+// PUT /api/bank-accounts/:id
+router.put('/:id', BankAccountController.updateBankAccount);
+
+// DELETE /api/bank-accounts/:id
+router.delete('/:id', BankAccountController.deleteBankAccount);
+
 export default router;
