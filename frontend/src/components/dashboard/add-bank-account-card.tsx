@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus } from 'lucide-react';
+import { Plus, CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import {
 	Dialog,
@@ -21,10 +21,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-
-interface AddBankAccountCardProps {
-	onAddAccount?: (accountData: BankAccountFormData) => void;
-}
+import { useCreateBankAccount } from '@/src/services/bankAccount.hooks';
+import { format } from 'date-fns';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 interface BankAccountFormData {
 	bankName: string;
@@ -33,6 +38,7 @@ interface BankAccountFormData {
 	accountType: 'Savings' | 'Fixed' | 'Other';
 	balance: number;
 	bankLogo: string;
+	openedDate: Date | undefined;
 }
 
 const bankOptions = [
@@ -43,7 +49,7 @@ const bankOptions = [
 	{ name: 'SCB Bank', logo: '/SCB.svg' },
 ];
 
-export function AddBankAccountCard({ onAddAccount }: AddBankAccountCardProps) {
+export function AddBankAccountCard() {
 	const [open, setOpen] = useState(false);
 	const [formData, setFormData] = useState<BankAccountFormData>({
 		bankName: '',
@@ -52,23 +58,35 @@ export function AddBankAccountCard({ onAddAccount }: AddBankAccountCardProps) {
 		accountType: 'Savings',
 		balance: 0,
 		bankLogo: '',
+		openedDate: undefined,
 	});
+
+	const mutation = useCreateBankAccount();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (onAddAccount) {
-			onAddAccount(formData);
-		}
-		setOpen(false);
-		// Reset form
-		setFormData({
-			bankName: '',
-			accountNumber: '',
-			accountName: '',
-			accountType: 'Savings',
-			balance: 0,
-			bankLogo: '',
-		});
+		mutation.mutate(
+			{
+				userId: '1', // Replace with actual user ID from auth
+				...formData,
+				openedDate: formData.openedDate?.toISOString(),
+			},
+			{
+				onSuccess: () => {
+					// Close dialog and reset form
+					setOpen(false);
+					setFormData({
+						bankName: '',
+						accountNumber: '',
+						accountName: '',
+						accountType: 'Savings',
+						balance: 0,
+						bankLogo: '',
+						openedDate: undefined,
+					});
+				},
+			}
+		);
 	};
 
 	const handleBankChange = (bankName: string) => {
@@ -166,10 +184,10 @@ export function AddBankAccountCard({ onAddAccount }: AddBankAccountCardProps) {
 									<SelectItem value="Savings">
 										Savings Account
 									</SelectItem>
-									<SelectItem value="Checking">
+									<SelectItem value="Fixed">
 										Fixed Account
 									</SelectItem>
-									<SelectItem value="Credit">
+									<SelectItem value="Other">
 										Other Account
 									</SelectItem>
 								</SelectContent>
@@ -231,6 +249,50 @@ export function AddBankAccountCard({ onAddAccount }: AddBankAccountCardProps) {
 								required
 							/>
 						</div>
+						{/* Opened Date */}
+						<div className="grid gap-2">
+							<Label>Opened Date</Label>
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										variant="outline"
+										className={cn(
+											'w-full justify-start text-left font-normal',
+											!formData.openedDate &&
+												'text-muted-foreground'
+										)}
+									>
+										<CalendarIcon className="mr-2 h-4 w-4" />
+										{formData.openedDate ? (
+											format(formData.openedDate, 'PPP')
+										) : (
+											<span>Pick a date</span>
+										)}
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									className="w-auto p-0"
+									align="start"
+								>
+									<Calendar
+										mode="single"
+										selected={formData.openedDate}
+										onSelect={(date) =>
+											setFormData({
+												...formData,
+												openedDate: date,
+											})
+										}
+										initialFocus
+										disabled={(date) =>
+											date > new Date() ||
+											date < new Date('1900-01-01')
+										}
+										fixedWeeks
+									/>
+								</PopoverContent>
+							</Popover>
+						</div>
 					</div>
 
 					<DialogFooter>
@@ -238,10 +300,13 @@ export function AddBankAccountCard({ onAddAccount }: AddBankAccountCardProps) {
 							type="button"
 							variant="outline"
 							onClick={() => setOpen(false)}
+							disabled={mutation.status === 'pending'}
 						>
 							Cancel
 						</Button>
-						<Button type="submit">Add Account</Button>
+						<Button type="submit" disabled={mutation.isPending}>
+							{mutation.isPending ? 'Adding...' : 'Add Account'}
+						</Button>
 					</DialogFooter>
 				</form>
 			</DialogContent>

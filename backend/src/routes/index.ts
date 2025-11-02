@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 	});
 });
 
-router.use('/api/bank-accounts', bankAccountRouter);
+router.use('/bank-accounts', bankAccountRouter);
 
 
 export default router;

@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS BankAccount (
+    AccountId SERIAL PRIMARY KEY,
+    UserId VARCHAR(255) NOT NULL,
+    BankName VARCHAR(255) NOT NULL,
+    BankLogo VARCHAR(500),
+    AccountNumber VARCHAR(50) NOT NULL,
+    AccountName VARCHAR(255) NOT NULL,
+    Balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
+    AccountType VARCHAR(50) CHECK (AccountType IN ('Savings', 'Fixed', 'Other')),
+    OpenedDate TIMESTAMP,
+    LastTransaction TIMESTAMP,
+    MonthlyChange DECIMAL(15, 2) DEFAULT 0,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_bankaccount_userid ON BankAccount(UserId);
+CREATE INDEX idx_bankaccount_accountnumber ON BankAccount(AccountNumber);

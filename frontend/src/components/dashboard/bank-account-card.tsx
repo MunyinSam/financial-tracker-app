@@ -19,19 +19,21 @@ import {
 	Calendar,
 	TrendingUp,
 } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface BankAccountCardProps {
     id: string;
     bankName: string;
-    bankLogo: string;
+    bankLogo?: string; // Make optional
     accountNumber: string;
     accountName: string;
     balance: number;
-    accountType?: 'Savings' | 'Checking' | 'Credit' | 'Fixed';
+    accountType?: 'Savings' | 'Checking' | 'Credit' | 'Fixed' | 'Other';
     openedDate?: string;
     lastTransaction?: string;
     monthlyChange?: number;
 }
+
 
 const formatCurrency = (amount: number): string => {
 	return new Intl.NumberFormat('th-TH', {
@@ -53,6 +55,10 @@ export function BankAccountCard({
 	monthlyChange = 2500.5,
 }: BankAccountCardProps) {
 	const changePercentage = ((monthlyChange / balance) * 100).toFixed(2);
+
+	useEffect(() => {
+		console.log(accountNumber);
+	}, [])
 
 	return (
 		<Dialog>

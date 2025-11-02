@@ -11,7 +11,6 @@ interface BankAccountsCarouselProps {
 
 export function BankAccountsCarousel({
     accounts,
-    onAddAccount,
 }: BankAccountsCarouselProps) {
     return (
         <div className="w-full">
@@ -20,7 +19,7 @@ export function BankAccountsCarousel({
                     {accounts.map((account) => (
                         <BankAccountCard key={account.id} {...account} />
                     ))}
-                    <AddBankAccountCard onAddAccount={onAddAccount} />
+                    <AddBankAccountCard/>
                 </div>
             </div>
         </div>
