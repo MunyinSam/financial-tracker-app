@@ -87,10 +87,10 @@ const data = {
 			url: '/dashboard/investments',
 			icon: TrendingUp,
 			items: [
-				{
-					title: 'Portfolio Overview',
-					url: '/dashboard/investments/portfolio',
-				},
+				// {
+				// 	title: 'Portfolio Overview',
+				// 	url: '/dashboard/investments/portfolio',
+				// },
 				{
 					title: 'Stocks',
 					url: '/dashboard/investments/stocks',
@@ -99,81 +99,92 @@ const data = {
 					title: 'Mutual Funds',
 					url: '/dashboard/investments/mutual-funds',
 				},
-				{
-					title: 'Performance',
-					url: '/dashboard/investments/performance',
-				},
+				// {
+				// 	title: 'Performance',
+				// 	url: '/dashboard/investments/performance',
+				// },
 			],
 		},
 		{
-			title: 'Paychecks',
-			url: '/dashboard/paychecks',
-			icon: DollarSign,
-			items: [
-				{
-					title: 'Recent Paychecks',
-					url: '/dashboard/paychecks/recent',
-				},
-				{
-					title: 'Pay Stubs',
-					url: '/dashboard/paychecks/stubs',
-				},
-				{
-					title: 'Tax Documents',
-					url: '/dashboard/paychecks/tax',
-				},
-				{
-					title: 'Benefits',
-					url: '/dashboard/paychecks/benefits',
-				},
-			],
-		},
-		{
-			title: 'Company',
-			url: '/dashboard/company',
-			icon: Building2,
-			items: [
-				{
-					title: 'Overview',
-					url: '/dashboard/company/overview',
-				},
-				{
-					title: 'Departments',
-					url: '/dashboard/company/departments',
-				},
-				{
-					title: 'Employees',
-					url: '/dashboard/company/employees',
-				},
-				{
-					title: 'Reports',
-					url: '/dashboard/company/reports',
-				},
-			],
-		},
-		{
-			title: 'Settings',
-			url: '/dashboard/settings',
+			title: 'Automation',
+			url: '/dashboard/automation',
 			icon: Settings,
 			items: [
 				{
-					title: 'Profile',
-					url: '/dashboard/settings/profile',
-				},
-				{
-					title: 'Security',
-					url: '/dashboard/settings/security',
-				},
-				{
-					title: 'Notifications',
-					url: '/dashboard/settings/notifications',
-				},
-				{
-					title: 'Preferences',
-					url: '/dashboard/settings/preferences',
+					title: 'Account Automation',
+					url: '/dashboard/automation/account',
 				},
 			],
 		},
+		// {
+		// 	title: 'Paychecks',
+		// 	url: '/dashboard/paychecks',
+		// 	icon: DollarSign,
+		// 	items: [
+		// 		{
+		// 			title: 'Recent Paychecks',
+		// 			url: '/dashboard/paychecks/recent',
+		// 		},
+		// 		{
+		// 			title: 'Pay Stubs',
+		// 			url: '/dashboard/paychecks/stubs',
+		// 		},
+		// 		{
+		// 			title: 'Tax Documents',
+		// 			url: '/dashboard/paychecks/tax',
+		// 		},
+		// 		{
+		// 			title: 'Benefits',
+		// 			url: '/dashboard/paychecks/benefits',
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	title: 'Company',
+		// 	url: '/dashboard/company',
+		// 	icon: Building2,
+		// 	items: [
+		// 		{
+		// 			title: 'Overview',
+		// 			url: '/dashboard/company/overview',
+		// 		},
+		// 		{
+		// 			title: 'Departments',
+		// 			url: '/dashboard/company/departments',
+		// 		},
+		// 		{
+		// 			title: 'Employees',
+		// 			url: '/dashboard/company/employees',
+		// 		},
+		// 		{
+		// 			title: 'Reports',
+		// 			url: '/dashboard/company/reports',
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	title: 'Settings',
+		// 	url: '/dashboard/settings',
+		// 	icon: Settings,
+		// 	items: [
+		// 		{
+		// 			title: 'Profile',
+		// 			url: '/dashboard/settings/profile',
+		// 		},
+		// 		{
+		// 			title: 'Security',
+		// 			url: '/dashboard/settings/security',
+		// 		},
+		// 		{
+		// 			title: 'Notifications',
+		// 			url: '/dashboard/settings/notifications',
+		// 		},
+		// 		{
+		// 			title: 'Preferences',
+		// 			url: '/dashboard/settings/preferences',
+		// 		},
+		// 	],
+		// },
 	],
 	projects: [
 		{
