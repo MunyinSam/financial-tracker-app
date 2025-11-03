@@ -1,9 +1,9 @@
 'use client';
 
-import { BankAccountsCarousel } from '@/src/components/dashboard/bank-account-carousel';
+import { BankAccountsCarousel } from '@/src/components/dashboard/accounts/bank-account-carousel';
 import { useBankAccountsByType } from '@/src/services/bankAccount.hooks';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AddBankAccountCard } from '@/src/components/dashboard/add-bank-account-card';
+import { AddBankAccountCard } from '@/src/components/dashboard/accounts/add-bank-account-card';
 
 export default function OtherPage() {
 	const {
@@ -58,15 +58,15 @@ export default function OtherPage() {
 				</div>
 			) : accounts.length === 0 ? (
 				<div className="border-2 p-5 rounded-lg">
-                    <p className="text-muted-foreground mb-4">
-                        No other accounts found
-                    </p>
-                    <div className="overflow-x-auto pb-4 -mx-4 px-4">
-                        <div className="flex gap-4 w-max">
-                            <AddBankAccountCard />
-                        </div>
-                    </div>
-                </div>
+					<p className="text-muted-foreground mb-4">
+						No other accounts found
+					</p>
+					<div className="overflow-x-auto pb-4 -mx-4 px-4">
+						<div className="flex gap-4 w-max">
+							<AddBankAccountCard />
+						</div>
+					</div>
+				</div>
 			) : (
 				<div className="border-2 p-5 rounded-lg">
 					<BankAccountsCarousel accounts={accounts} />

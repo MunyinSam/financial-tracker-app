@@ -1,7 +1,7 @@
 'use client';
 
-import { BankAccountsCarousel } from '@/src/components/dashboard/bank-account-carousel';
-import { BankAccountSummary } from '@/src/components/dashboard/bank-account-summary';
+import { BankAccountsCarousel } from '@/src/components/dashboard/accounts/bank-account-carousel';
+import { BankAccountSummary } from '@/src/components/dashboard/accounts/bank-account-summary';
 import { useBankAccounts } from '@/src/services/bankAccount.hooks';
 
 export default function SummaryPage() {

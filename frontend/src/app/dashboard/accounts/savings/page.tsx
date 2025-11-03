@@ -1,9 +1,9 @@
 'use client';
 
-import { BankAccountsCarousel } from '@/src/components/dashboard/bank-account-carousel';
+import { BankAccountsCarousel } from '@/src/components/dashboard/accounts/bank-account-carousel';
 import { useBankAccountsByType } from '@/src/services/bankAccount.hooks';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AddBankAccountCard } from '@/src/components/dashboard/add-bank-account-card';
+import { AddBankAccountCard } from '@/src/components/dashboard/accounts/add-bank-account-card';
 
 export default function SavingsPage() {
 	const {
