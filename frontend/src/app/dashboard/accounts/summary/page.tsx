@@ -42,15 +42,13 @@ export default function SummaryPage() {
 			</div>
 
 			{/* Summary Cards */}
-			<div className="w-full">
-				<BankAccountSummary userId={userId} />
-			</div>
+			<BankAccountSummary userId={userId} />
 
 			{/* Bank Accounts Carousel */}
 			{isLoading ? (
 				<div className="text-muted-foreground">Loading accounts...</div>
 			) : (
-				<div className="border-2 p-5 rounded-lg w-full max-w-full overflow-hidden">
+				<div className="border-2 p-5 rounded-lg w-340">
 					<BankAccountsCarousel accounts={accounts} />
 				</div>
 			)}
