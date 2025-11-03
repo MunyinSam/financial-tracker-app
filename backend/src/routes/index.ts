@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import bankAccountRouter from './bankAccount.route';
+import stockAccountRouter from './stockAccount.route'
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/bank-accounts', bankAccountRouter);
+router.use('/stocks', stockAccountRouter)
 
 
 export default router;
