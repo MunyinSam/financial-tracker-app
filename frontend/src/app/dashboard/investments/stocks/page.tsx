@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AddStockDialog } from '@/src/components/dashboard/stocks/add-stock-dialog';
+import { StockActionsMenu } from '@/src/components/dashboard/stocks/stock-actions-menu';
 import { useUserStockHoldings } from '@/src/services/stockHoldings.hooks';
 
 const formatCurrency = (amount: number): string => {
@@ -407,12 +408,10 @@ export default function StocksPage() {
 														</div>
 													</TableCell>
 													<TableCell>
-														<Button
-															variant="ghost"
-															size="sm"
-														>
-															<MoreVertical className="h-4 w-4" />
-														</Button>
+														<StockActionsMenu
+															stock={stock}
+															userId={userId}
+														/>
 													</TableCell>
 												</TableRow>
 											);
