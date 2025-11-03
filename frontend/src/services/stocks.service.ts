@@ -13,15 +13,6 @@ export interface StockQuote {
 	volume: number;
 }
 
-export interface StockHolding {
-	id: number;
-	symbol: string;
-	name: string;
-	shares: number;
-	avgPrice: number;
-	logo?: string;
-}
-
 export const stocksApi = {
 	async getQuote(symbol: string): Promise<StockQuote> {
 		const url = `${API_BASE}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
@@ -54,49 +45,5 @@ export const stocksApi = {
 			previousClose: parseFloat(quote['08. previous close']),
 			volume: parseInt(quote['06. volume']),
 		};
-	},
-
-	async getMultipleQuotes(
-		symbols: string[]
-	): Promise<Map<string, StockQuote>> {
-		const quotes = new Map<string, StockQuote>();
-
-		// Alpha Vantage free tier: 5 requests per minute, 25 per day
-		// Add delay between requests to avoid rate limiting
-		for (const symbol of symbols) {
-			try {
-				const quote = await this.getQuote(symbol);
-				quotes.set(symbol, quote);
-				// Wait 12 seconds between requests (5 per minute limit)
-				if (symbols.indexOf(symbol) < symbols.length - 1) {
-					await new Promise((resolve) => setTimeout(resolve, 12000));
-				}
-			} catch (error) {
-				console.error(`Failed to fetch quote for ${symbol}:`, error);
-			}
-		}
-
-		return quotes;
-	},
-
-	// For demo purposes, get a few popular stocks
-	async getPopularStocks(): Promise<StockQuote[]> {
-		const symbols = ['AAPL', 'GOOGL', 'MSFT'];
-		const quotes: StockQuote[] = [];
-
-		for (const symbol of symbols) {
-			try {
-				const quote = await this.getQuote(symbol);
-				quotes.push(quote);
-				// Wait between requests
-				if (symbols.indexOf(symbol) < symbols.length - 1) {
-					await new Promise((resolve) => setTimeout(resolve, 12000));
-				}
-			} catch (error) {
-				console.error(`Failed to fetch ${symbol}:`, error);
-			}
-		}
-
-		return quotes;
 	},
 };

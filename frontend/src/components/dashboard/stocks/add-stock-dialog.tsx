@@ -15,17 +15,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Search, TrendingUp } from 'lucide-react';
 import { useStockQuote } from '@/src/services/stocks.hooks';
+import { useCreateStockHolding } from '@/src/services/stockHoldings.hooks';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-
-interface AddStockDialogProps {
-	onAddStock: (stock: {
-		symbol: string;
-		name: string;
-		shares: number;
-		avgPrice: number;
-	}) => void;
-}
 
 const stockLogos: { [key: string]: string } = {
 	AAPL: '🍎',
@@ -63,7 +55,11 @@ const stockNames: { [key: string]: string } = {
 	SQ: 'Block Inc.',
 };
 
-export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
+interface AddStockDialogProps {
+	userId: number;
+}
+
+export function AddStockDialog({ userId }: AddStockDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [symbol, setSymbol] = useState('');
 	const [shares, setShares] = useState('');
@@ -76,6 +72,8 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 		error: searchError,
 	} = useStockQuote(searchedSymbol);
 
+	const createHolding = useCreateStockHolding();
+
 	const handleSearch = () => {
 		const upperSymbol = symbol.toUpperCase().trim();
 		if (upperSymbol) {
@@ -83,20 +81,28 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 		}
 	};
 
-	const handleAddStock = () => {
+	const handleAddStock = async () => {
 		if (searchedSymbol && shares && avgPrice) {
-			onAddStock({
-				symbol: searchedSymbol,
-				name: stockNames[searchedSymbol] || `${searchedSymbol} Inc.`,
-				shares: parseFloat(shares),
-				avgPrice: parseFloat(avgPrice),
-			});
-			// Reset form
-			setSymbol('');
-			setShares('');
-			setAvgPrice('');
-			setSearchedSymbol('');
-			setOpen(false);
+			try {
+				await createHolding.mutateAsync({
+					userid: userId,
+					symbol: searchedSymbol,
+					companyname:
+						stockNames[searchedSymbol] || `${searchedSymbol} Inc.`,
+					shares: parseFloat(shares),
+					averageprice: parseFloat(avgPrice),
+					purchasedate: new Date().toISOString(),
+				});
+
+				// Reset form
+				setSymbol('');
+				setShares('');
+				setAvgPrice('');
+				setSearchedSymbol('');
+				setOpen(false);
+			} catch (error) {
+				console.error('Error adding stock:', error);
+			}
 		}
 	};
 
@@ -146,10 +152,15 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 										handleSearch();
 									}
 								}}
+								disabled={createHolding.isPending}
 							/>
 							<Button
 								onClick={handleSearch}
-								disabled={!symbol || isSearching}
+								disabled={
+									!symbol ||
+									isSearching ||
+									createHolding.isPending
+								}
 								variant="outline"
 							>
 								{isSearching ? (
@@ -239,6 +250,7 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 							onChange={(e) => setShares(e.target.value)}
 							min="0"
 							step="0.01"
+							disabled={createHolding.isPending}
 						/>
 					</div>
 
@@ -254,6 +266,7 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 									size="sm"
 									onClick={useCurrentPrice}
 									className="h-auto p-0 text-xs"
+									disabled={createHolding.isPending}
 								>
 									Use current price
 								</Button>
@@ -267,6 +280,7 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 							onChange={(e) => setAvgPrice(e.target.value)}
 							min="0"
 							step="0.01"
+							disabled={createHolding.isPending}
 						/>
 					</div>
 
@@ -351,14 +365,27 @@ export function AddStockDialog({ onAddStock }: AddStockDialogProps) {
 							setAvgPrice('');
 							setSearchedSymbol('');
 						}}
+						disabled={createHolding.isPending}
 					>
 						Cancel
 					</Button>
 					<Button
 						onClick={handleAddStock}
-						disabled={!searchedSymbol || !shares || !avgPrice}
+						disabled={
+							!searchedSymbol ||
+							!shares ||
+							!avgPrice ||
+							createHolding.isPending
+						}
 					>
-						Add to Portfolio
+						{createHolding.isPending ? (
+							<>
+								<Loader2 className="h-4 w-4 animate-spin mr-2" />
+								Adding...
+							</>
+						) : (
+							'Add to Portfolio'
+						)}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

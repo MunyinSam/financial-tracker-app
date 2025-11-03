@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,9 +23,9 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { useStockHoldings } from '@/src/services/stocks.hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AddStockDialog } from '@/src/components/dashboard/stocks/add-stock-dialog';
+import { useUserStockHoldings } from '@/src/services/stockHoldings.hooks';
 
 const formatCurrency = (amount: number): string => {
 	return new Intl.NumberFormat('en-US', {
@@ -35,66 +34,60 @@ const formatCurrency = (amount: number): string => {
 	}).format(amount);
 };
 
+const getStockLogo = (symbol: string): string => {
+	const logos: { [key: string]: string } = {
+		AAPL: '🍎',
+		GOOGL: '🔍',
+		MSFT: '🪟',
+		TSLA: '⚡',
+		AMZN: '📦',
+		META: '👤',
+		NVDA: '🎮',
+		NFLX: '🎬',
+		DIS: '🏰',
+		AMD: '💻',
+		INTC: '🔷',
+		UBER: '🚗',
+		COIN: '🪙',
+		PYPL: '💳',
+		SQ: '⬜',
+	};
+	return logos[symbol] || '📈';
+};
+
 export default function StocksPage() {
+	const userId = 1; // TODO: Get from auth context
 	const {
 		data: holdings = [],
 		isLoading,
 		error,
-		refetch,
-	} = useStockHoldings();
-	const [localHoldings, setLocalHoldings] = useState<any[]>([]);
+	} = useUserStockHoldings(userId);
 
-	// Merge API holdings with local holdings
-	const allHoldings = [...holdings, ...localHoldings];
-
-	const handleAddStock = (stock: {
-		symbol: string;
-		name: string;
-		shares: number;
-		avgPrice: number;
-	}) => {
-		// Add to local state (in real app, save to backend)
-		const newHolding = {
-			id: Date.now(),
-			...stock,
-			logo: getStockLogo(stock.symbol),
-		};
-		setLocalHoldings((prev) => [...prev, newHolding]);
-
-		// Refetch to get current prices
-		refetch();
-	};
-
-	const getStockLogo = (symbol: string): string => {
-		const logos: { [key: string]: string } = {
-			AAPL: '🍎',
-			GOOGL: '🔍',
-			MSFT: '🪟',
-			TSLA: '⚡',
-			AMZN: '📦',
-			META: '👤',
-			NVDA: '🎮',
-			NFLX: '🎬',
-			DIS: '🏰',
-			AMD: '💻',
-			INTC: '🔷',
-			UBER: '🚗',
-			COIN: '🪙',
-			PYPL: '💳',
-			SQ: '⬜',
-		};
-		return logos[symbol] || '📈';
-	};
+	// Enhance holdings with logos
+	const enrichedHoldings = holdings.map((holding: any) => ({
+		...holding,
+		id: holding.stockid,
+		symbol: holding.symbol,
+		name: holding.companyname,
+		shares: holding.shares,
+		avgPrice: holding.averageprice,
+		logo: getStockLogo(holding.symbol),
+	}));
 
 	// Calculate portfolio summary
-	const portfolioSummary = allHoldings.reduce(
-		(acc, stock) => ({
-			totalValue: acc.totalValue + (stock?.totalValue || 0),
-			totalInvested:
-				acc.totalInvested +
-				(stock?.shares || 0) * (stock?.avgPrice || 0),
-			totalGainLoss: acc.totalGainLoss + (stock?.gainLoss || 0),
-		}),
+	const portfolioSummary = enrichedHoldings.reduce(
+		(acc, stock) => {
+			const currentPrice = stock.avgPrice; // TODO: Fetch real-time prices
+			const totalValue = stock.shares * currentPrice;
+			const totalCost = stock.shares * stock.avgPrice;
+			const gainLoss = totalValue - totalCost;
+
+			return {
+				totalValue: acc.totalValue + totalValue,
+				totalInvested: acc.totalInvested + totalCost,
+				totalGainLoss: acc.totalGainLoss + gainLoss,
+			};
+		},
 		{ totalValue: 0, totalInvested: 0, totalGainLoss: 0 }
 	);
 
@@ -111,10 +104,6 @@ export default function StocksPage() {
 				<div className="text-red-500">
 					Failed to load stocks:{' '}
 					{error instanceof Error ? error.message : 'Unknown error'}
-					<p className="text-sm text-muted-foreground mt-2">
-						Note: Free API has 5 requests/minute limit. Please wait
-						and refresh.
-					</p>
 				</div>
 			</div>
 		);
@@ -130,11 +119,8 @@ export default function StocksPage() {
 						Track and manage your investments
 					</p>
 				</div>
-				<AddStockDialog onAddStock={handleAddStock} />
+				<AddStockDialog userId={userId} />
 			</div>
-
-			{/* Rest of the component remains the same */}
-			{/* ... (keep all the existing code for summary cards, tables, etc.) */}
 
 			{/* Compact Portfolio Summary */}
 			<div className="grid gap-3 md:grid-cols-4">
@@ -250,7 +236,7 @@ export default function StocksPage() {
 									<Skeleton className="h-7 w-16 mt-1" />
 								) : (
 									<p className="text-xl font-bold">
-										{allHoldings.length}
+										{enrichedHoldings.length}
 									</p>
 								)}
 							</div>
@@ -299,6 +285,14 @@ export default function StocksPage() {
 										Loading stock data...
 									</span>
 								</div>
+							) : enrichedHoldings.length === 0 ? (
+								<div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+									<TrendingUp className="h-12 w-12 mb-2 opacity-20" />
+									<p>No stocks in your portfolio yet</p>
+									<p className="text-sm">
+										Click "Add Stock" to get started
+									</p>
+								</div>
 							) : (
 								<Table>
 									<TableHeader>
@@ -325,93 +319,119 @@ export default function StocksPage() {
 										</TableRow>
 									</TableHeader>
 									<TableBody>
-										{allHoldings.map((stock: any) => (
-											<TableRow
-												key={stock.id}
-												className="hover:bg-muted/50 cursor-pointer"
-											>
-												<TableCell>
-													<div className="flex items-center gap-3">
-														<span className="text-2xl">
-															{stock.logo}
-														</span>
-														<div>
-															<div className="font-semibold">
-																{stock.symbol}
-															</div>
-															<div className="text-xs text-muted-foreground">
-																{stock.name}
+										{enrichedHoldings.map((stock: any) => {
+											const currentPrice = stock.avgPrice; // TODO: Real-time price
+											const totalValue =
+												stock.shares * currentPrice;
+											const totalCost =
+												stock.shares * stock.avgPrice;
+											const gainLoss =
+												totalValue - totalCost;
+											const gainLossPercent =
+												(gainLoss / totalCost) * 100;
+
+											return (
+												<TableRow
+													key={stock.id}
+													className="hover:bg-muted/50 cursor-pointer"
+												>
+													<TableCell>
+														<div className="flex items-center gap-3">
+															<span className="text-2xl">
+																{stock.logo}
+															</span>
+															<div>
+																<div className="font-semibold">
+																	{
+																		stock.symbol
+																	}
+																</div>
+																<div className="text-xs text-muted-foreground">
+																	{stock.name}
+																</div>
 															</div>
 														</div>
-													</div>
-												</TableCell>
-												<TableCell className="text-right">
-													{stock.shares}
-												</TableCell>
-												<TableCell className="text-right">
-													{formatCurrency(
-														stock.avgPrice
-													)}
-												</TableCell>
-												<TableCell className="text-right">
-													{formatCurrency(
-														stock.currentPrice
-													)}
-												</TableCell>
-												<TableCell className="text-right font-semibold">
-													{formatCurrency(
-														stock.totalValue
-													)}
-												</TableCell>
-												<TableCell className="text-right">
-													<div className="flex flex-col items-end">
-														<span
-															className={`font-semibold ${
-																stock.gainLoss >=
-																0
-																	? 'text-green-600'
-																	: 'text-red-600'
-															}`}
+													</TableCell>
+													<TableCell className="text-right">
+														{stock.shares}
+													</TableCell>
+													<TableCell className="text-right">
+														{formatCurrency(
+															stock.avgPrice
+														)}
+													</TableCell>
+													<TableCell className="text-right">
+														{formatCurrency(
+															currentPrice
+														)}
+													</TableCell>
+													<TableCell className="text-right font-semibold">
+														{formatCurrency(
+															totalValue
+														)}
+													</TableCell>
+													<TableCell className="text-right">
+														<div className="flex flex-col items-end">
+															<span
+																className={`font-semibold ${
+																	gainLoss >=
+																	0
+																		? 'text-green-600'
+																		: 'text-red-600'
+																}`}
+															>
+																{gainLoss >= 0
+																	? '+'
+																	: ''}
+																{formatCurrency(
+																	gainLoss
+																)}
+															</span>
+															<Badge
+																variant={
+																	gainLoss >=
+																	0
+																		? 'default'
+																		: 'destructive'
+																}
+																className="text-xs"
+															>
+																{gainLoss >= 0
+																	? '+'
+																	: ''}
+																{gainLossPercent.toFixed(
+																	2
+																)}
+																%
+															</Badge>
+														</div>
+													</TableCell>
+													<TableCell>
+														<Button
+															variant="ghost"
+															size="sm"
 														>
-															{stock.gainLoss >= 0
-																? '+'
-																: ''}
-															{formatCurrency(
-																stock.gainLoss
-															)}
-														</span>
-														<Badge
-															variant={
-																stock.gainLoss >=
-																0
-																	? 'default'
-																	: 'destructive'
-															}
-															className="text-xs"
-														>
-															{stock.gainLoss >= 0
-																? '+'
-																: ''}
-															{stock.gainLossPercent.toFixed(
-																2
-															)}
-															%
-														</Badge>
-													</div>
-												</TableCell>
-												<TableCell>
-													<Button
-														variant="ghost"
-														size="sm"
-													>
-														<MoreVertical className="h-4 w-4" />
-													</Button>
-												</TableCell>
-											</TableRow>
-										))}
+															<MoreVertical className="h-4 w-4" />
+														</Button>
+													</TableCell>
+												</TableRow>
+											);
+										})}
 									</TableBody>
 								</Table>
 							)}
+						</TabsContent>
+
+						<TabsContent value="gainers" className="mt-4">
+							<p className="text-center text-muted-foreground py-8">
+								Coming soon...
+							</p>
+						</TabsContent>
+
+						<TabsContent value="losers" className="mt-4">
+							<p className="text-center text-muted-foreground py-8">
+								Coming soon...
+							</p>
 						</TabsContent>
 					</Tabs>
 				</CardHeader>

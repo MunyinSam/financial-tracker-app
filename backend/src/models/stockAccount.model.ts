@@ -60,15 +60,23 @@ export const stockAccountModel = {
 		}
 	},
 
+	// SELECT * FROM stock_holdings
+	// WHERE userid = $1
+	// ORDER BY createdat DESC
+
 	// Get all stock holdings for a user
 	async getByUserId(userId: number): Promise<StockHolding[]> {
+        logger.info('Called getUserById');
 		try {
 			const query = `
-                SELECT * FROM stock_holdings
-                WHERE userid = $1
-                ORDER BY createdat DESC
-            `;
+            SELECT * FROM stock_holdings
+            WHERE userid = $1
+            ORDER BY createdat DESC
+        `;
 			const result = await pool.query(query, [userId]);
+			logger.info(
+				`Found ${result.rows.length} holdings for user ${userId}`
+			);
 			return result.rows;
 		} catch (error) {
 			logger.error('Error fetching stock holdings:', error);
