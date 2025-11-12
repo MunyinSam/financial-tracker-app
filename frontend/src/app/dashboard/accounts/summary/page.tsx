@@ -45,13 +45,13 @@ export default function SummaryPage() {
 			<BankAccountSummary userId={userId} />
 
 			{/* Bank Accounts Carousel */}
-			{isLoading ? (
+			{/* {isLoading ? (
 				<div className="text-muted-foreground">Loading accounts...</div>
 			) : (
-				<div className="border-2 p-5 rounded-lg w-340">
+				<div className="border-2 p-5 rounded-lg w-450">
 					<BankAccountsCarousel accounts={accounts} />
 				</div>
-			)}
+			)} */}
 		</div>
 	);
 }

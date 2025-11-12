@@ -76,10 +76,10 @@ const data = {
 					title: 'Other Accounts',
 					url: '/dashboard/accounts/other',
 				},
-				{
-					title: 'Credit Cards',
-					url: '/dashboard/accounts/credit-cards',
-				},
+				// {
+				// 	title: 'Credit Cards',
+				// 	url: '/dashboard/accounts/credit-cards',
+				// },
 			],
 		},
 		{
@@ -105,17 +105,17 @@ const data = {
 				// },
 			],
 		},
-		{
-			title: 'Automation',
-			url: '/dashboard/automation',
-			icon: Settings,
-			items: [
-				{
-					title: 'Account Automation',
-					url: '/dashboard/automation/account',
-				},
-			],
-		},
+		// {
+		// 	title: 'Automation',
+		// 	url: '/dashboard/automation',
+		// 	icon: Settings,
+		// 	items: [
+		// 		{
+		// 			title: 'Account Automation',
+		// 			url: '/dashboard/automation/account',
+		// 		},
+		// 	],
+		// },
 		// {
 		// 	title: 'Paychecks',
 		// 	url: '/dashboard/paychecks',
@@ -218,7 +218,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavProjects projects={data.projects} />
+				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser user={data.user} />

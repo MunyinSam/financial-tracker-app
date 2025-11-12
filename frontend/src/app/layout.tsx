@@ -2,7 +2,7 @@
 
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { AppSidebar } from '@/src/components/app-sidebar';
+import { AppSidebarWrapper } from '@/src/components/app-sidebar-wrapper';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -42,7 +42,7 @@ export default function RootLayout({
 				<QueryClientProvider client={queryClient}>
 					<div className="min-h-screen w-full overflow-x-hidden">
 						<SidebarProvider>
-							<AppSidebar />
+							<AppSidebarWrapper />
 							<SidebarInset>
 								<main className="flex-1 overflow-auto p-4">
 									{children}
